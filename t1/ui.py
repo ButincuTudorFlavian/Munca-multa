@@ -1,4 +1,4 @@
-from functions import *
+from t1.functions import *
 
 def print_menu():
     print("""

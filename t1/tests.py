@@ -1,4 +1,4 @@
-from functions import *
+from t1.functions import *
 def test_count_codes():
     assert count_codes(1023, "3041") == 1
     assert count_codes(1023, "1023") == 4

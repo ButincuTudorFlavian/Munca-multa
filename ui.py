@@ -1,91 +1,95 @@
-from repository import BusTextFIleRepo, BusRouteTextFIleRepo
-from services import BusService, BusRouteService
+from repository import TextFileTennisPlayerRepo
+from services import TennisService
 
 class UI:
-    def __init__(self, bus_service:BusService, route_service:BusRouteService):
-        self._bus_service = bus_service
-        self._route_service = route_service
+    def __init__(self, tennis_service: TennisService):
+        self._tennis_service = tennis_service
         self.running = True
+
+    @staticmethod
+    def print_menu():
+        print("Welcome to Tennis Tournament!")
+        print("   1. List all players")
+        print("   2. Start a Tennis tournament")
+        print("   x. Exit")
 
     @staticmethod
     def run():
         try:
-            bus_repo = BusTextFIleRepo()
-            route_repo = BusRouteTextFIleRepo()
-            bus_service = BusService(bus_repo)
-            route_service = BusRouteService(route_repo)
-            return UI(bus_service, route_service)
+            tennis_repo = TextFileTennisPlayerRepo()
+            tennis_service = TennisService(tennis_repo)
+            return UI(tennis_service)
         except Exception as e:
             print(e)
             return None
 
-    @staticmethod
-    def print_menu():
-        print("Welcome to Bus Tycoon")
-        print("  1. List all buses")
-        print("  2. List all routes")
-        print("  3. List all buses on a specific route")
-        print("  4. Calculate bus kilometers based on bus's id")
-        print("  5. Display routes based on mileage")
-        print("  x. Exit")
-
     def user_run(self):
-        if self._bus_service is None or self._route_service is None:
-            print("Bus/Route service was not initialized")
+        if self._tennis_service is None:
             return
 
         while self.running:
             self.print_menu()
             option = input("Enter your choice: ")
             if option == "1":
-                self.list_buses()
+                try:
+                    self.list_all_players()
+                except Exception as e:
+                    print(e)
             elif option == "2":
-                self.list_routes()
-            elif option == "3":
-                self.list_buses_on_route()
-            elif option == "4":
-                self.calculate_km()
-            elif option == "5":
-                self.display_routes_on_mileage()
+                self.play_game()
             else:
                 self.running = False
 
-    def list_buses(self):
-        print("List of all buses: ")
-        bus_list = self._bus_service.list_buses()
-        for bus in bus_list:
-            print(bus)
-        print("\n")
+    def list_all_players(self):
+        player_list = self._tennis_service.list_all_players_descending()
+        print("Displaying all players: ")
+        for player in player_list:
+            print(player)
 
-    def list_routes(self):
-        print("List of all routes: ")
-        route_list = self._route_service.list_routes()
-        for route in route_list:
-            print(route)
+    def game(self, paired_players):
+        for players in paired_players:
+            player1 = players[0].get_name
+            player2 = players[1].get_name
+            print(players[0])
+            print(players[1])
+            player_win = input(f"{player1} vs {player2}. Who wins?\n")
+            if player_win == player1:
+                self._tennis_service.player_loses(players[1].get_id)
+                self._tennis_service.player_wins(players[0].get_id)
+            else:
+                self._tennis_service.player_loses(players[0].get_id)
+                self._tennis_service.player_wins(players[1].get_id)
 
-    def list_buses_on_route(self):
-        route = input("Enter a route code: ")
-        bus_list = self._bus_service.list_bus_info_on_route(route)
-        for bus in bus_list:
-            print(bus)
+    def qualify(self):
+        print("---- Welcome to the qualifications for the Tennis Tournament!")
+        paired_players = self._tennis_service.paired_players()
+        self.game(paired_players)
+        self.tournament()
 
-    def calculate_km(self):
-        bus_id = input("Enter a bus id: ")
-        times, route_code = self._bus_service.bus_times(bus_id)
-        km = self._route_service.route_km(route_code)
-        times = int(times)
-        km = int(km)
-        calculate = times * km
-        bus_info = self._bus_service.bus_info(bus_id)
-        print("Bus kilometers: ", calculate)
-        print("Bus data: ", bus_info)
+    def tournament(self):
+        print("---- Welcome to the game of the Tennis Tournament!")
+        paired_players = self._tennis_service.paired_players()
+        while len(paired_players) > 1:
+            if len(paired_players) == 4:
+                print("Last 8\n")
+            if len(paired_players) == 2:
+                print("Last 4\n")
+            self.game(paired_players)
+            paired_players = self._tennis_service.paired_players()
 
-    def display_routes_on_mileage(self):
-        frequency = self._bus_service.calculate_times_on_one_route()
-        ordered_routes = self._route_service.ordered_routes(frequency)
-        print("Routes ordered by mileage: ", ordered_routes)
-        """for route in ordered_routes:
-            print(f"Route: {route} --> {str(ordered_routes[route])} km")"""
+        for players in paired_players:
+            player1 = players[0].get_name
+            player2 = players[1].get_name
+            print(players[0])
+            print(players[1])
+            final_win = input(f"Final: {player1} vs {player2}. Who wins?\n")
+            print(f"Player {final_win} wins the tournament\n")
+
+    def play_game(self):
+        if self._tennis_service.is_qualify_round() is True:
+            self.qualify()
+        else:
+            self.tournament()
 
 if __name__ == "__main__":
     ui = UI.run()

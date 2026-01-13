@@ -19,7 +19,6 @@ class TournamentServices:
         """
         Updates the list of players remaining in the tournament.
         """
-
         self._active_players = player_list
 
     def get_players_sorted_desc(self):
@@ -44,6 +43,9 @@ class TournamentServices:
 
         count = len(self._active_players)
 
+        if count < 2:
+            return (False, 0, 0)
+
         power_of_2 = 2 ** int(math.log2(count))
 
         if count == power_of_2:
@@ -52,7 +54,7 @@ class TournamentServices:
         num_to_eliminate = count - power_of_2
         num_qualifiers = num_to_eliminate * 2
 
-        return (True, num_qualifiers, num_to_eliminate)
+        return (True, num_to_eliminate, num_qualifiers)
 
     def generate_pairings(self, player_pool):
         """
@@ -74,7 +76,7 @@ class TournamentServices:
         The winner's strength increases by 1 after a match.
         """
 
-        current_strength = winner.get_strength()
+        current_strength = winner.get_strength
         winner.get_strength = current_strength + 1
         return winner
 

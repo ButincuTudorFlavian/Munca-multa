@@ -7,19 +7,19 @@ class PlayerRepository:
     """
 
     def __init__(self, filename):
-        self.players = self.load_players(filename)
+        self._filename = filename
 
-    def load_players(self, filename):
+    def load_players(self):
         """
         Reads player data from a text file.
         Expected format: id,name,strength
         """
 
         player_list = []
-        if not os.path.exists(filename):
+        if not os.path.exists(self._filename):
             return []
 
-        with open(filename, "r") as f:
+        with open(self._filename, "r") as f:
             for line in f:
                 parts = line.strip().split(",")
                 if len(parts) == 3:

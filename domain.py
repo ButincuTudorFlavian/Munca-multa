@@ -1,10 +1,9 @@
-class Address:
-    def __init__(self, id, name, number, x_coord, y_coord):
+class Student:
+    def __init__(self, id, name, attendance, grade):
         self._id = id
         self._name = name
-        self._number = number
-        self._x_coord = x_coord
-        self._y_coord = y_coord
+        self._attendance = attendance
+        self._grade = grade
 
     @property
     def get_id(self):
@@ -15,16 +14,16 @@ class Address:
         return self._name
 
     @property
-    def get_number(self):
-        return self._number
+    def get_attendance(self):
+        return self._attendance
 
     @property
-    def get_x_coord(self):
-        return self._x_coord
+    def get_grade(self)->int:
+        return self._grade
 
-    @property
-    def get_y_coord(self):
-        return self._y_coord
+    @get_grade.setter
+    def set_grade(self, value):
+        self._grade = value
 
     def __str__(self):
-        return f"{self._id}, {self._name}, {self._number}, {self.get_x_coord}, {self.get_y_coord}"
+        return f"{self.get_id}, {self.get_name}, {self.get_attendance}, {self.get_grade}"

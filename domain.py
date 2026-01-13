@@ -1,8 +1,10 @@
-class TennisPlayer:
-    def __init__(self, id, name, strength):
+class Address:
+    def __init__(self, id, name, number, x_coord, y_coord):
         self._id = id
         self._name = name
-        self._strength = strength
+        self._number = number
+        self._x_coord = x_coord
+        self._y_coord = y_coord
 
     @property
     def get_id(self):
@@ -13,12 +15,16 @@ class TennisPlayer:
         return self._name
 
     @property
-    def get_strength(self):
-        return self._strength
+    def get_number(self):
+        return self._number
 
-    @get_strength.setter
-    def set_strength(self, value):
-        self._strength = value
+    @property
+    def get_x_coord(self):
+        return self._x_coord
+
+    @property
+    def get_y_coord(self):
+        return self._y_coord
 
     def __str__(self):
-        return f"{self.get_id}, {self.get_name}, {self.get_strength}"
+        return f"{self._id}, {self._name}, {self._number}, {self.get_x_coord}, {self.get_y_coord}"

@@ -1,47 +1,78 @@
-from repository import TextFileTennisPlayerRepo
+import math
 import random
 
-class TennisService:
-    def __init__(self, tennis_repo: TextFileTennisPlayerRepo):
-        self._tennis_repo = tennis_repo
+class AddressError(Exception):
+    pass
 
-    def list_all_players(self):
-        return self._tennis_repo.list_all_players()
+class AddressService:
+    def __init__(self, address_repo):
+        self._address_repo = address_repo
 
-    def list_all_players_descending(self):
-        sorted_players = sorted(self.list_all_players(), key=lambda player: player.get_strength, reverse=True)
-        return sorted_players
+    @staticmethod
+    def generate_id():
+        return random.randint(1, 999)
 
-    def player_loses(self, player_id):
-        return self._tennis_repo.delete_player(player_id)
+    def address_ok(self, id, name, number, x, y):
+        try:
+            id = int(id)
+            number = int(number)
+            x = int(x)
+            y = int(y)
+        except AddressError:
+            raise AddressError("Address is not valid")
 
-    def player_wins(self, player_id):
-        for player in self.list_all_players():
-            if player.get_id == player_id:
-                player.set_strength += 1
-
-    def paired_players(self):
-        sorted_players = sorted(self.list_all_players(), key=lambda player: player.get_strength)
-        number = self.no_of_players()
-        selected_players = sorted_players[:number]
-        random.shuffle(selected_players)
-        paired_players = [selected_players[i:i+2] for i in range(0, len(selected_players), 2)]
-        return paired_players
-
-    def is_qualify_round(self):
-        number_of_players = len(self.list_all_players())
-        p2 = 2
-        while p2 < number_of_players:
-            p2 = p2 * 2
-        if p2 == number_of_players:
+        for address in self._address_repo.list_all():
+            if address.get_id == id:
+                return False
+        if len(name) < 3:
+            return False
+        if number < 0 or number > 100:
+            return False
+        if x < -100 or x > 100:
+            return False
+        if y < -100 or y > 100:
             return False
         return True
 
-    def no_of_players(self):
-        number_of_players = len(self.list_all_players())
-        p2 = 2
-        while p2 < number_of_players:
-            p2 = p2 * 2
-        p2 = p2 // 2
-        number_ok = (number_of_players - p2) * 2
-        return number_ok
+    def list_addresses(self):
+        return self._address_repo.list_all()
+
+    def add_address(self, id, name, number, x, y):
+        if self.address_ok(id, name, number, x, y):
+            self._address_repo.add_address(id, name, number, x, y)
+        else:
+            raise AddressError("Invalid address")
+
+    @staticmethod
+    def calculate_distance_x_y(x, y, x1, y1):
+        return math.sqrt((x - int(x1)) ** 2 + (y - int(y1)) ** 2)
+
+    def calculate_addresses(self, x, y, distance):
+        list_ok = []
+        for address in self._address_repo.list_all():
+            dist = math.sqrt((x - int(address.get_x_coord)) ** 2 + (y - int(address.get_y_coord)) ** 2)
+            if dist <= distance:
+                list_ok.append(address)
+        return list_ok
+
+    def verif(self, x, y):
+        for address in self._address_repo.list_all():
+            if address.get_x_coord == x and address.get_y_coord == y:
+                return False
+        return True
+
+    def calculate_position(self):
+        sum_min = 100000000
+        x_min , y_min = 0, 0
+        for x in range(-100, 100):
+            for y in range(-100, 100):
+                if self.verif(x, y):
+                    sum = 0
+                    for address in self._address_repo.list_all():
+                        sum += self.calculate_distance_x_y(x, y, address.get_x_coord, address.get_y_coord)
+                    if sum < sum_min:
+                        sum_min = sum
+                        x_min = x
+                        y_min = y
+
+        return x_min, y_min

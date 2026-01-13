@@ -10,18 +10,24 @@ class PlayerRepo:
     def load_file(self):
         try:
             with open(self.filename, "r") as file:
-                for line in file:
+                lines = file.readlines()
+                for line in lines:
                     line = line.strip()
                     if not line:
                         continue
+
                     parts = line.split(',')
                     if len(parts) < 3:
                         continue
+
                     id_player = parts[0].strip()
                     name = parts[1].strip()
-                    strenght = int(parts[2].strip())
+                    try:
+                        strength = int(parts[2].strip())
+                        self.player_list.append(Player(id_player, name, strength))
+                    except ValueError:
+                        pass
 
-                    self.player_list.append(Player(id_player, name, strenght))
         except FileNotFoundError:
             print("File not found")
 

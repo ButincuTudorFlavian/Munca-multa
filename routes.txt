@@ -1,0 +1,7 @@
+1742,Satu Mare,10:20,Bucuresti,20:30,100
+1743,Bistrita,12:00,Cluj,14:15,50
+1856,Constanta,00:00,Bucuresti,03:30,220
+1900,Tulcea,5:30,Galati,06:45,90
+1901,Galati,09:00,Tulcea,10:15,100
+8852,Cluj,10:40,Floresti,10:50,100
+9604,Cluj,10:30,Iasi,19:30,50
